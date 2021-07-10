@@ -1,0 +1,99 @@
+set(tests
+  aead_aes256gcm
+  aead_aes256gcm2
+  aead_chacha20poly1305
+  aead_chacha20poly13052
+  aead_xchacha20poly1305
+  auth
+  auth2
+  auth3
+  auth5
+  auth6
+  auth7
+  box
+  box2
+  box7
+  box8
+  box_easy
+  box_easy2
+  box_seal
+  box_seed
+  chacha20
+  codecs
+  core1
+  core2
+  core3
+  core4
+  core5
+  core6
+  core_ed25519
+  core_ristretto255
+  ed25519_convert
+  generichash
+  generichash2
+  generichash3
+  hash
+  hash3
+  kdf
+  keygen
+  kx
+  metamorphic
+  misuse
+  onetimeauth
+  onetimeauth2
+  onetimeauth7
+  pwhash_argon2i
+  pwhash_argon2id
+  pwhash_scrypt
+  pwhash_scrypt_ll
+  randombytes
+  scalarmult
+  scalarmult2
+  scalarmult5
+  scalarmult6
+  scalarmult7
+  scalarmult8
+  scalarmult_ed25519
+  scalarmult_ristretto255
+  secretbox
+  secretbox2
+  secretbox7
+  secretbox8
+  secretbox_easy
+  secretbox_easy2
+  secretstream
+  shorthash
+  sign
+  siphashx24
+  sodium_core
+  sodium_utils
+  sodium_utils2
+  sodium_utils3
+  sodium_version
+  stream
+  stream2
+  stream3
+  stream4
+  verify1
+  xchacha20
+  )
+if(ENABLE_MINIMAL)
+  # grep "@MINIMAL_FALSE@" test/default/Makefile.in
+  list(REMOVE_ITEM tests
+    core_ed25519
+    core_ristretto255
+    pwhash_scrypt
+    pwhash_scrypt_ll
+    scalarmult_ed25519
+    scalarmult_ristretto255
+    siphashx24
+    xchacha20
+    )
+endif()
+foreach(test ${tests})
+  add_executable(${test} default/${test}.c)
+  target_include_directories(${test} PRIVATE quirks)
+  target_link_libraries(${test} PRIVATE sodium)
+  add_test(NAME ${test} COMMAND ${test} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/default)
+  set_property(TARGET ${test} PROPERTY FOLDER test)
+endforeach()
