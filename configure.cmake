@@ -1,5 +1,6 @@
 include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
+include(CheckCSourceRuns)
 include(CheckFunctionExists)
 include(CheckIncludeFile)
 include(CheckLinkerFlag)
@@ -13,6 +14,12 @@ macro(check_include_file_def incfile var)
 endmacro()
 macro(check_compiles_def var src)
   check_c_source_compiles("${src}" ${var})
+  if(${var})
+    list(APPEND pvtDefs ${var}=1)
+  endif()
+endmacro()
+macro(check_runs_def var src)
+  check_c_source_runs("${src}" ${var})
   if(${var})
     list(APPEND pvtDefs ${var}=1)
   endif()
@@ -194,7 +201,7 @@ foreach(tls_keyword ${tls_keywords})
   math(EXPR idx "${idx}+1")
 endforeach()
 ########################################
-check_compiles_def(HAVE_MMINTRIN_H
+check_runs_def(HAVE_MMINTRIN_H
   "
   #pragma GCC target(\"mmx\")
   #include <mmintrin.h>
@@ -208,7 +215,7 @@ check_compiles_def(HAVE_MMINTRIN_H
 if(HAVE_MMINTRIN_H)
   check_compiler_opt(-mmmx)
 endif()
-check_compiles_def(HAVE_EMMINTRIN_H
+check_runs_def(HAVE_EMMINTRIN_H
   "
   #pragma GCC target(\"sse2\")
   #ifndef __SSE2__
@@ -226,7 +233,7 @@ check_compiles_def(HAVE_EMMINTRIN_H
 if(HAVE_EMMINTRIN_H)
   check_compiler_opt(-msse2)
 endif()
-check_compiles_def(HAVE_PMMINTRIN_H
+check_runs_def(HAVE_PMMINTRIN_H
   "
   #pragma GCC target(\"sse3\")
   #include <pmmintrin.h>
@@ -240,7 +247,7 @@ check_compiles_def(HAVE_PMMINTRIN_H
 if(HAVE_PMMINTRIN_H)
   check_compiler_opt(-msse3)
 endif()
-check_compiles_def(HAVE_TMMINTRIN_H
+check_runs_def(HAVE_TMMINTRIN_H
   "
   #pragma GCC target(\"ssse3\")
   #include <tmmintrin.h>
@@ -254,7 +261,7 @@ check_compiles_def(HAVE_TMMINTRIN_H
 if(HAVE_TMMINTRIN_H)
   check_compiler_opt(-mssse3)
 endif()
-check_compiles_def(HAVE_SMMINTRIN_H
+check_runs_def(HAVE_SMMINTRIN_H
   "
   #pragma GCC target(\"sse4.1\")
   #include <smmintrin.h>
@@ -268,7 +275,7 @@ check_compiles_def(HAVE_SMMINTRIN_H
 if(HAVE_SMMINTRIN_H)
   check_compiler_opt(-msse4.1)
 endif()
-check_compiles_def(HAVE_AVXINTRIN_H
+check_runs_def(HAVE_AVXINTRIN_H
   "
   #ifdef __native_client__
   # error NativeClient detected - Avoiding AVX opcodes
@@ -285,7 +292,7 @@ check_compiles_def(HAVE_AVXINTRIN_H
 if(HAVE_AVXINTRIN_H)
   check_compiler_opt(-mavx)
 endif()
-check_compiles_def(HAVE_AVX2INTRIN_H
+check_runs_def(HAVE_AVX2INTRIN_H
   "
   #ifdef __native_client__
   # error NativeClient detected - Avoiding AVX2 opcodes
@@ -302,29 +309,27 @@ check_compiles_def(HAVE_AVX2INTRIN_H
   )
 if(HAVE_AVX2INTRIN_H)
   check_compiler_opt(-mavx2)
+  check_c_source_runs(
+    "
+    #ifdef __native_client__
+    # error NativeClient detected - Avoiding AVX2 opcodes
+    #endif
+    #pragma GCC target(\"avx2\")
+    #include <immintrin.h>
+    int main(void)
+    {
+      __m256i y = _mm256_broadcastsi128_si256(_mm_setzero_si128());
+      return 0;
+    }
+    "
+    _mm256_broadcastsi128_si256_DEFINED
+    )
+  if(NOT _mm256_broadcastsi128_si256_DEFINED)
+    list(APPEND pvtDefs _mm256_broadcastsi128_si256=_mm_broadcastsi128_256)
+  endif()
 endif()
 ########################################
-# _mm256_broadcastsi128_si256_DEFINED
-check_c_source_compiles(
-  "
-  #ifdef __native_client__
-  # error NativeClient detected - Avoiding AVX2 opcodes
-  #endif
-  #pragma GCC target(\"avx2\")
-  #include <immintrin.h>
-  int main(void)
-  {
-    __m256i y = _mm256_broadcastsi128_si256(_mm_setzero_si128());
-    return 0;
-  }
-  "
-  _mm256_broadcastsi128_si256_DEFINED
-  )
-if(NOT _mm256_broadcastsi128_si256_DEFINED)
-  list(APPEND pvtDefs _mm256_broadcastsi128_si256=_mm_broadcastsi128_256)
-endif()
-########################################
-check_compiles_def(HAVE_AVX512FINTRIN_H
+check_runs_def(HAVE_AVX512FINTRIN_H
   "
   #ifdef __native_client__
   # error NativeClient detected - Avoiding AVX512F opcodes
@@ -355,7 +360,7 @@ if(HAVE_AVX512FINTRIN_H)
 else()
   check_compiler_opt(-mno-avx512f)
 endif()
-check_compiles_def(HAVE_WMMINTRIN_H
+check_runs_def(HAVE_WMMINTRIN_H
   "
   #ifdef __native_client__
   # error NativeClient detected - Avoiding AESNI opcodes
@@ -375,7 +380,7 @@ if(HAVE_WMMINTRIN_H)
   check_compiler_opt(-maes -mpclmul)
 endif()
 ########################################
-check_compiles_def(HAVE_RDRAND
+check_runs_def(HAVE_RDRAND
   "
   #ifdef __native_client__
   # error NativeClient detected - Avoiding RDRAND opcodes
@@ -398,7 +403,7 @@ check_include_file_def(sys/mman.h HAVE_SYS_MMAN_H)
 check_include_file_def(sys/random.h HAVE_SYS_RANDOM_H)
 check_include_file_def(intrin.h HAVE_INTRIN_H)
 ########################################
-check_compiles_def(HAVE__XGETBV
+check_runs_def(HAVE__XGETBV
   "
   #include <intrin.h>
   int main(void)
@@ -408,7 +413,7 @@ check_compiles_def(HAVE__XGETBV
   }
   "
   )
-check_compiles_def(HAVE_INLINE_ASM
+check_runs_def(HAVE_INLINE_ASM
   "
   int main(void)
   {
@@ -419,7 +424,7 @@ check_compiles_def(HAVE_INLINE_ASM
   }
   "
   )
-check_compiles_def(HAVE_AMD64_ASM
+check_runs_def(HAVE_AMD64_ASM
   "
   #if defined(__amd64) || defined(__amd64__) || defined(__x86_64__)
   # if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__MINGW64__) || defined(_WIN32) || defined(_WIN64)
@@ -442,7 +447,7 @@ check_compiles_def(HAVE_AMD64_ASM
   }
   "
   )
-check_compiles_def(HAVE_AVX_ASM
+check_runs_def(HAVE_AVX_ASM
   "
   #if defined(__amd64) || defined(__amd64__) || defined(__x86_64__)
   # if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__MINGW64__) || defined(_WIN32) || defined(_WIN64)
@@ -459,7 +464,7 @@ check_compiles_def(HAVE_AVX_ASM
   }
   "
   )
-check_compiles_def(HAVE_TI_MODE
+check_runs_def(HAVE_TI_MODE
   "
   #if !defined(__clang__) && !defined(__GNUC__) && !defined(__SIZEOF_INT128__)
   # error mode(TI) is a gcc extension, and __int128 is not available
@@ -493,7 +498,7 @@ check_compiles_def(HAVE_TI_MODE
   }
   "
   )
-check_compiles_def(HAVE_CPUID
+check_runs_def(HAVE_CPUID
   "
   int main(void)
   {
@@ -529,7 +534,7 @@ if(ASM_HIDE_SYMBOL)
   list(APPEND pvtDefs ASM_HIDE_SYMBOL=.hidden)
 endif()
 ########################################
-check_compiles_def(HAVE_WEAK_SYMBOLS
+check_runs_def(HAVE_WEAK_SYMBOLS
   "
   #if !defined(__ELF__) && !defined(__APPLE_CC__)
   # error Support for weak symbols may not be available
@@ -542,7 +547,7 @@ check_compiles_def(HAVE_WEAK_SYMBOLS
   }
   "
   )
-check_compiles_def(HAVE_ATOMIC_OPS
+check_runs_def(HAVE_ATOMIC_OPS
   "
   int main(void)
   {
@@ -553,6 +558,22 @@ check_compiles_def(HAVE_ATOMIC_OPS
   }
   "
   )
+check_c_source_runs(
+  "
+  #include <limits.h>
+  #include <stdint.h>
+  int main(void)
+  {
+    (void)SIZE_MAX;
+    (void)UINT64_MAX;
+    return 0;
+  }
+  "
+  STDC_LIMIT_MACROS_REQUIRED
+  )
+if(STDC_LIMIT_MACROS_REQUIRED)
+  list(APPEND pvtDefs __STDC_LIMIT_MACROS __STDC_CONSTANT_MACROS)
+endif()
 check_compiles_def(HAVE_ALLOCA_H
   "
   #include <alloca.h>
