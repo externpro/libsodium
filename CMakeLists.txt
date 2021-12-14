@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.21)
 file(STRINGS configure.ac configure_ac REGEX ^AC_INIT)
 string(REGEX MATCH "([0-9]+)[.][0-9]+[.][0-9]+" VER "${configure_ac}")
 project(sodium VERSION ${VER} LANGUAGES C ASM)
