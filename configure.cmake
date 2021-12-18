@@ -558,22 +558,6 @@ check_runs_def(HAVE_ATOMIC_OPS
   }
   "
   )
-check_c_source_runs(
-  "
-  #include <limits.h>
-  #include <stdint.h>
-  int main(void)
-  {
-    (void)SIZE_MAX;
-    (void)UINT64_MAX;
-    return 0;
-  }
-  "
-  STDC_LIMIT_MACROS_REQUIRED
-  )
-if(STDC_LIMIT_MACROS_REQUIRED)
-  list(APPEND pvtDefs __STDC_LIMIT_MACROS __STDC_CONSTANT_MACROS)
-endif()
 check_compiles_def(HAVE_ALLOCA_H
   "
   #include <alloca.h>
