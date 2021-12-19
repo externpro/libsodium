@@ -400,6 +400,7 @@ if(HAVE_RDRAND)
 endif()
 ########################################
 check_include_file_def(sys/mman.h HAVE_SYS_MMAN_H)
+check_include_file_def(sys/param.h HAVE_SYS_PARAM_H)
 check_include_file_def(sys/random.h HAVE_SYS_RANDOM_H)
 check_include_file_def(intrin.h HAVE_INTRIN_H)
 ########################################
@@ -600,6 +601,8 @@ check_func_exists_def(mmap HAVE_MMAP)
 check_func_exists_def(mlock HAVE_MLOCK)
 check_func_exists_def(madvise HAVE_MADVISE)
 check_func_exists_def(mprotect HAVE_MPROTECT)
+check_func_exists_def(raise HAVE_RAISE)
+check_func_exists_def(sysconf HAVE_SYSCONF)
 ########################################
 check_compiles_def(HAVE_GETRANDOM
   "
