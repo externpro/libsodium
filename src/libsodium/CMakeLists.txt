@@ -665,10 +665,6 @@ if(ENABLE_MINIMAL)
 endif()
 configure_file(include/sodium/version.h.in include/sodium/version.h)
 ############################################################
-if(DEFINED XP_VER)
-  set(ver _${XP_VER})
-  set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}${ver})
-endif()
 if(DEFINED XP_NAMESPACE)
   set(nameSpace NAMESPACE ${XP_NAMESPACE}::)
 endif()
@@ -683,13 +679,12 @@ target_include_directories(${lib_name} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTAL
   PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include/sodium
   )
 target_link_libraries(${lib_name} PRIVATE Threads::Threads)
-set_target_properties(${lib_name} PROPERTIES OUTPUT_NAME ${lib_name}${ver})
 install(DIRECTORY include/ ${CMAKE_CURRENT_BINARY_DIR}/include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   FILES_MATCHING PATTERN "*.h"
   PATTERN "private*" EXCLUDE
   )
-set(targetsFile ${lib_name}${ver}-targets)
+set(targetsFile ${lib_name}-targets)
 install(TARGETS ${lib_name} EXPORT ${targetsFile}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
