@@ -668,6 +668,9 @@ configure_file(include/sodium/version.h.in include/sodium/version.h)
 if(DEFINED XP_NAMESPACE)
   set(nameSpace NAMESPACE ${XP_NAMESPACE}::)
 endif()
+if(NOT DEFINED XP_INSTALL_CMAKEDIR)
+  set(XP_INSTALL_CMAKEDIR ${CMAKE_INSTALL_DATADIR}/cmake)
+endif()
 ############################################################
 add_library(${lib_name} STATIC ${libsrcs})
 target_compile_definitions(${lib_name} PUBLIC SODIUM_STATIC PRIVATE ${pvtDefs})
@@ -690,5 +693,5 @@ install(TARGETS ${lib_name} EXPORT ${targetsFile}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
-install(EXPORT ${targetsFile} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake ${nameSpace})
+install(EXPORT ${targetsFile} DESTINATION ${XP_INSTALL_CMAKEDIR} ${nameSpace})
 compareCmakeFilesys("${${lib_name}_libsrcs}")
