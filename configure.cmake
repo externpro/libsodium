@@ -244,9 +244,10 @@ check_runs_def(HAVE_PMMINTRIN_H
   }
   "
   )
-if(HAVE_PMMINTRIN_H)
-  check_compiler_opt(-msse3)
-endif()
+# NOTE: Disabling compiler usage of sse3 due to minimum hardware requirement
+#if(HAVE_PMMINTRIN_H)
+#  check_compiler_opt(-msse3)
+#endif()
 check_runs_def(HAVE_TMMINTRIN_H
   "
   #pragma GCC target(\"ssse3\")
@@ -289,9 +290,10 @@ check_runs_def(HAVE_AVXINTRIN_H
   }
   "
   )
-if(HAVE_AVXINTRIN_H)
-  check_compiler_opt(-mavx)
-endif()
+# NOTE: Disabling compiler usage of avx due to minimum hardware requirement
+#if(HAVE_AVXINTRIN_H)
+#  check_compiler_opt(-mavx)
+#endif()
 check_runs_def(HAVE_AVX2INTRIN_H
   "
   #ifdef __native_client__
@@ -308,7 +310,8 @@ check_runs_def(HAVE_AVX2INTRIN_H
   "
   )
 if(HAVE_AVX2INTRIN_H)
-  check_compiler_opt(-mavx2)
+  # NOTE: Disabling compiler usage of avx2 due to minimum hardware requirement
+  #check_compiler_opt(-mavx2)
   check_c_source_runs(
     "
     #ifdef __native_client__
@@ -355,11 +358,10 @@ check_runs_def(HAVE_AVX512FINTRIN_H
   }
   "
   )
-if(HAVE_AVX512FINTRIN_H)
-  check_compiler_opt(-mavx512f)
-else()
-  check_compiler_opt(-mno-avx512f)
-endif()
+# NOTE: Disabling compiler usage of avx512 due to minimum hardware requirement
+#if(HAVE_AVX512FINTRIN_H)
+#  check_compiler_opt(-mavx512f)
+#endif()
 check_runs_def(HAVE_WMMINTRIN_H
   "
   #ifdef __native_client__
@@ -395,9 +397,10 @@ check_runs_def(HAVE_RDRAND
   }
   "
   )
-if(HAVE_RDRAND)
-  check_compiler_opt(-mrdrnd)
-endif()
+# NOTE: Disabling compiler usage of rdrand due to minimum hardware requirement
+#if(HAVE_RDRAND)
+#  check_compiler_opt(-mrdrnd)
+#endif()
 ########################################
 check_include_file_def(sys/mman.h HAVE_SYS_MMAN_H)
 check_include_file_def(sys/param.h HAVE_SYS_PARAM_H)
