@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.31)
 file(STRINGS configure.ac configure_ac REGEX ^AC_INIT)
 string(REGEX MATCH "([0-9]+)[.][0-9]+[.][0-9]+" VER "${configure_ac}")
 project(sodium VERSION ${VER} LANGUAGES C ASM)
 include(GNUInstallDirs)
 include(configure.cmake)
-include(flags OPTIONAL)
+include(xpflags)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON) # enables Solution Folders
 option(DISABLE_TESTS "Disable tests" OFF)
 option(ENABLE_BLOCKING_RANDOM "Enable only if /dev/urandom is totally broken on the target platform" OFF)
