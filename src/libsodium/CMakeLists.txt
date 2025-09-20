@@ -682,12 +682,23 @@ target_include_directories(${lib_name} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTAL
   PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include/sodium
   )
 target_link_libraries(${lib_name} PRIVATE Threads::Threads)
+############################################################
+set(targetsFile ${lib_name}-targets)
+string(JOIN "\n" EXT1
+  "set(THREAD_PREFER_PTHREAD_FLAG ON)"
+  "find_package(Threads REQUIRED) # depends on Threads::Threads"
+  ""
+  )
+set(lib ${lib_name})
+if(DEFINED XP_NAMESPACE)
+  string(PREPEND lib "${XP_NAMESPACE}::")
+endif()
+xpPackageDevel(TARGETS_FILE ${targetsFile} LIBRARIES ${lib})
 install(DIRECTORY include/ ${CMAKE_CURRENT_BINARY_DIR}/include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   FILES_MATCHING PATTERN "*.h"
   PATTERN "private*" EXCLUDE
   )
-set(targetsFile ${lib_name}-targets)
 install(TARGETS ${lib_name} EXPORT ${targetsFile}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
