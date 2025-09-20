@@ -160,3 +160,7 @@ test/default/verify1
 test/default/xchacha20
 test/js.done
 testing
+# externpro
+.env
+_bld*/
+docker-compose.override.yml
