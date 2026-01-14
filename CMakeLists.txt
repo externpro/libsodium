@@ -3,8 +3,6 @@ file(STRINGS configure.ac configure_ac REGEX ^AC_INIT)
 string(REGEX MATCH "([0-9]+)[.][0-9]+[.][0-9]+" VER "${configure_ac}")
 set(CMAKE_PROJECT_TOP_LEVEL_INCLUDES .devcontainer/cmake/xproinc.cmake)
 project(libsodium VERSION ${VER} LANGUAGES C ASM)
-include(GNUInstallDirs)
-include(xpflags)
 include(configure.cmake)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON) # enables Solution Folders
 option(DISABLE_TESTS "Disable tests" OFF)
