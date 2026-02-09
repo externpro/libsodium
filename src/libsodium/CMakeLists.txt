@@ -686,8 +686,8 @@ if(DEFINED XP_NAMESPACE)
     LICENSE "[ISC](https://doc.libsodium.org/#license 'Internet Systems Consortium License, functionally equivalent to simplified BSD and MIT licenses')"
     )
   set(nameSpace NAMESPACE ${XP_NAMESPACE}::)
-elseif(NOT DEFINED XP_INSTALL_CMAKEDIR)
-  set(XP_INSTALL_CMAKEDIR ${CMAKE_INSTALL_DATADIR}/cmake)
+elseif(NOT DEFINED CMAKE_INSTALL_CMAKEDIR)
+  set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_DATADIR}/cmake)
 endif()
 install(DIRECTORY include/ ${CMAKE_CURRENT_BINARY_DIR}/include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
@@ -699,5 +699,5 @@ install(TARGETS ${lib_name} EXPORT ${targetsFile}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
-install(EXPORT ${targetsFile} DESTINATION ${XP_INSTALL_CMAKEDIR} ${nameSpace})
+install(EXPORT ${targetsFile} DESTINATION ${CMAKE_INSTALL_CMAKEDIR} ${nameSpace})
 compareCmakeFilesys("${${lib_name}_libsrcs}")
