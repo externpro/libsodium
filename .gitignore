@@ -193,3 +193,7 @@ tmp/
 Vagrantfile
 zig-cache
 zig-out
+# externpro
+.env
+_bld*/
+docker-compose.override.yml
