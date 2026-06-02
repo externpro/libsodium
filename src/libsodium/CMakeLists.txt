@@ -677,15 +677,14 @@ target_include_directories(${lib_name} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTAL
 target_link_libraries(${lib_name} PRIVATE Threads::Threads)
 ############################################################
 set(targetsFile ${lib_name}-targets)
-if(DEFINED XP_NAMESPACE)
-  xpExternPackage(NAMESPACE ${XP_NAMESPACE}
-    TARGETS_FILE ${targetsFile} FIND_THREADS LIBRARIES ${lib_name}
+if(COMMAND xpExternPackage)
+  xpExternPackage(TARGETS_FILE ${targetsFile}
+    LIBRARIES ${lib_name} DEFAULT_TARGETS ${lib_name}
     BASE aa099f5e82ae78175f9c1c48372a123cb634dd92 XPDIFF "auto"
     WEB "https://doc.libsodium.org/" UPSTREAM "github.com/jedisct1/libsodium"
     DESC "library for encryption, decryption, signatures, password hashing and more"
     LICENSE "[ISC](https://doc.libsodium.org/#license 'Internet Systems Consortium License, functionally equivalent to simplified BSD and MIT licenses')"
     )
-  set(nameSpace NAMESPACE ${XP_NAMESPACE}::)
 elseif(NOT DEFINED CMAKE_INSTALL_CMAKEDIR)
   set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_DATADIR}/cmake)
 endif()
@@ -699,5 +698,5 @@ install(TARGETS ${lib_name} EXPORT ${targetsFile}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
-install(EXPORT ${targetsFile} DESTINATION ${CMAKE_INSTALL_CMAKEDIR} ${nameSpace})
+install(EXPORT ${targetsFile} DESTINATION ${CMAKE_INSTALL_CMAKEDIR} NAMESPACE ${PROJECT_NAME}::)
 compareCmakeFilesys("${${lib_name}_libsrcs}")
