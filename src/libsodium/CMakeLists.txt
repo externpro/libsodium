@@ -856,8 +856,8 @@ endif()
 configure_file(include/sodium/version.h.in include/sodium/version.h)
 ############################################################
 add_library(${lib_name} STATIC ${libsrcs})
-target_compile_definitions(${lib_name} PUBLIC SODIUM_STATIC PRIVATE ${pvtDefs})
-target_compile_options(${lib_name} PRIVATE ${pvtOpts})
+target_compile_definitions(${lib_name} PUBLIC SODIUM_STATIC PRIVATE ${XP_DEFS})
+target_compile_options(${lib_name} PRIVATE ${XP_OPTS})
 target_include_directories(${lib_name} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/sodium>

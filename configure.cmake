@@ -1,77 +1,29 @@
-include(CheckCCompilerFlag)
+include(xpcfg)
 include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
-include(CheckFunctionExists)
-include(CheckIncludeFile)
-include(CheckLinkerFlag)
 include(TestBigEndian)
-########################################
-macro(check_include_file_def incfile var)
-  check_include_file("${incfile}" ${var})
-  if(${var})
-    list(APPEND pvtDefs ${var}=1)
-  endif()
-endmacro()
-macro(check_compiles_def var src)
-  check_c_source_compiles("${src}" ${var})
-  if(${var})
-    list(APPEND pvtDefs ${var}=1)
-  endif()
-endmacro()
-macro(check_runs_def var src)
-  check_c_source_runs("${src}" ${var})
-  if(${var})
-    list(APPEND pvtDefs ${var}=1)
-  endif()
-endmacro()
-macro(check_compiler_opt)
-  foreach(opt ${ARGN})
-    string(REPLACE "-" "_" opt_ ${opt})
-    string(REPLACE "=" "_" opt_ ${opt_})
-    check_c_compiler_flag("${opt}" has_na_c${opt_})
-    if(has_na_c${opt_})
-      list(APPEND pvtOpts ${opt})
-    endif()
-  endforeach()
-endmacro()
-macro(check_link_opts)
-  foreach(opt ${ARGN})
-    string(REPLACE "-" "_" opt_ ${opt})
-    string(REPLACE "," "_" opt_ ${opt_})
-    check_linker_flag(C "${opt}" has_na_ln${opt_})
-    if(has_na_ln${opt_})
-      list(APPEND linkOpts ${opt})
-    endif()
-  endforeach()
-endmacro()
-macro(check_func_exists_def func def)
-  check_function_exists(${func} ${def})
-  if(${def})
-    list(APPEND pvtDefs ${def}=1)
-  endif()
-endmacro()
 ########################################
 test_big_endian(IS_BIG_ENDIAN)
 if(IS_BIG_ENDIAN)
-  list(APPEND pvtDefs NATIVE_BIG_ENDIAN=1)
+  list(APPEND XP_DEFS NATIVE_BIG_ENDIAN=1)
 else()
-  list(APPEND pvtDefs NATIVE_LITTLE_ENDIAN=1)
+  list(APPEND XP_DEFS NATIVE_LITTLE_ENDIAN=1)
 endif()
 ########################################
 if(ENABLE_BLOCKING_RANDOM)
-  list(APPEND pvtDefs USE_BLOCKING_RANDOM=1)
+  list(APPEND XP_DEFS USE_BLOCKING_RANDOM=1)
 endif()
 if(ENABLE_MINIMAL)
-  list(APPEND pvtDefs MINIMAL=1)
+  list(APPEND XP_DEFS MINIMAL=1)
 endif()
 ########################################
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads)
 if(CMAKE_USE_PTHREADS_INIT)
-  list(APPEND pvtDefs HAVE_PTHREAD=1)
+  list(APPEND XP_DEFS HAVE_PTHREAD=1)
 endif()
 ########################################
-check_compiles_def(HAVE_LIBCTGRIND
+xpcfgCheckCompilesDef(HAVE_LIBCTGRIND
   "
   /* Override any GCC internal prototype to avoid an error.
      Use char because int might match the return type of a GCC
@@ -84,7 +36,7 @@ check_compiles_def(HAVE_LIBCTGRIND
   }
   "
   )
-check_compiles_def(HAVE_C_VARARRAYS
+xpcfgCheckCompilesDef(HAVE_C_VARARRAYS
   "
   /* Test for VLA support.  This test is partly inspired
      from examples in the C standard.  Use at least two VLA
@@ -118,9 +70,9 @@ check_compiles_def(HAVE_C_VARARRAYS
   "
   )
 if(NOT HAVE_C_VARARRAYS)
-  list(APPEND pvtDefs __STDC_NO_VLA__=1)
+  list(APPEND XP_DEFS __STDC_NO_VLA__=1)
 endif()
-check_compiles_def(HAVE_CATCHABLE_SEGV
+xpcfgCheckCompilesDef(HAVE_CATCHABLE_SEGV
   "
   #include <signal.h>
   #include <stdlib.h>
@@ -140,7 +92,7 @@ check_compiles_def(HAVE_CATCHABLE_SEGV
   }
   "
   )
-check_compiles_def(HAVE_CATCHABLE_ABRT
+xpcfgCheckCompilesDef(HAVE_CATCHABLE_ABRT
   "
   #include <signal.h>
   #include <stdlib.h>
@@ -194,14 +146,14 @@ foreach(tls_keyword ${tls_keywords})
     TLS_${idx}
     )
   if(TLS_${idx})
-    list(APPEND pvtDefs TLS=${tls_keyword})
-    check_compiler_opt(-ftls-model=local-dynamic)
+    list(APPEND XP_DEFS TLS=${tls_keyword})
+    xpcfgCheckCompilerOpts(XP_OPTS na -ftls-model=local-dynamic)
     break()
   endif()
   math(EXPR idx "${idx}+1")
 endforeach()
 ########################################
-check_runs_def(HAVE_MMINTRIN_H
+xpcfgCheckRunsDef(HAVE_MMINTRIN_H
   "
   #pragma GCC target(\"mmx\")
   #include <mmintrin.h>
@@ -213,9 +165,9 @@ check_runs_def(HAVE_MMINTRIN_H
   "
   )
 if(HAVE_MMINTRIN_H)
-  check_compiler_opt(-mmmx)
+  xpcfgCheckCompilerOpts(XP_OPTS na -mmmx)
 endif()
-check_runs_def(HAVE_EMMINTRIN_H
+xpcfgCheckRunsDef(HAVE_EMMINTRIN_H
   "
   #pragma GCC target(\"sse2\")
   #ifndef __SSE2__
@@ -231,9 +183,9 @@ check_runs_def(HAVE_EMMINTRIN_H
   "
   )
 if(HAVE_EMMINTRIN_H)
-  check_compiler_opt(-msse2)
+  xpcfgCheckCompilerOpts(XP_OPTS na -msse2)
 endif()
-check_runs_def(HAVE_PMMINTRIN_H
+xpcfgCheckRunsDef(HAVE_PMMINTRIN_H
   "
   #pragma GCC target(\"sse3\")
   #include <pmmintrin.h>
@@ -246,9 +198,9 @@ check_runs_def(HAVE_PMMINTRIN_H
   )
 # NOTE: Disabling compiler usage of sse3 due to minimum hardware requirement
 #if(HAVE_PMMINTRIN_H)
-#  check_compiler_opt(-msse3)
+#  xpcfgCheckCompilerOpts(XP_OPTS na -msse3)
 #endif()
-check_runs_def(HAVE_TMMINTRIN_H
+xpcfgCheckRunsDef(HAVE_TMMINTRIN_H
   "
   #pragma GCC target(\"ssse3\")
   #include <tmmintrin.h>
@@ -260,9 +212,9 @@ check_runs_def(HAVE_TMMINTRIN_H
   "
   )
 if(HAVE_TMMINTRIN_H)
-  check_compiler_opt(-mssse3)
+  xpcfgCheckCompilerOpts(XP_OPTS na -mssse3)
 endif()
-check_runs_def(HAVE_SMMINTRIN_H
+xpcfgCheckRunsDef(HAVE_SMMINTRIN_H
   "
   #pragma GCC target(\"sse4.1\")
   #include <smmintrin.h>
@@ -274,9 +226,9 @@ check_runs_def(HAVE_SMMINTRIN_H
   "
   )
 if(HAVE_SMMINTRIN_H)
-  check_compiler_opt(-msse4.1)
+  xpcfgCheckCompilerOpts(XP_OPTS na -msse4.1)
 endif()
-check_runs_def(HAVE_AVXINTRIN_H
+xpcfgCheckRunsDef(HAVE_AVXINTRIN_H
   "
   #ifdef __native_client__
   # error NativeClient detected - Avoiding AVX opcodes
@@ -292,9 +244,9 @@ check_runs_def(HAVE_AVXINTRIN_H
   )
 # NOTE: Disabling compiler usage of avx due to minimum hardware requirement
 #if(HAVE_AVXINTRIN_H)
-#  check_compiler_opt(-mavx)
+#  xpcfgCheckCompilerOpts(XP_OPTS na -mavx)
 #endif()
-check_runs_def(HAVE_AVX2INTRIN_H
+xpcfgCheckRunsDef(HAVE_AVX2INTRIN_H
   "
   #ifdef __native_client__
   # error NativeClient detected - Avoiding AVX2 opcodes
@@ -311,7 +263,7 @@ check_runs_def(HAVE_AVX2INTRIN_H
   )
 if(HAVE_AVX2INTRIN_H)
   # NOTE: Disabling compiler usage of avx2 due to minimum hardware requirement
-  #check_compiler_opt(-mavx2)
+  #xpcfgCheckCompilerOpts(XP_OPTS na -mavx2)
   check_c_source_runs(
     "
     #ifdef __native_client__
@@ -328,11 +280,11 @@ if(HAVE_AVX2INTRIN_H)
     _mm256_broadcastsi128_si256_DEFINED
     )
   if(NOT _mm256_broadcastsi128_si256_DEFINED)
-    list(APPEND pvtDefs _mm256_broadcastsi128_si256=_mm_broadcastsi128_256)
+    list(APPEND XP_DEFS _mm256_broadcastsi128_si256=_mm_broadcastsi128_256)
   endif()
 endif()
 ########################################
-check_runs_def(HAVE_AVX512FINTRIN_H
+xpcfgCheckRunsDef(HAVE_AVX512FINTRIN_H
   "
   #ifdef __native_client__
   # error NativeClient detected - Avoiding AVX512F opcodes
@@ -360,9 +312,9 @@ check_runs_def(HAVE_AVX512FINTRIN_H
   )
 # NOTE: Disabling compiler usage of avx512 due to minimum hardware requirement
 #if(HAVE_AVX512FINTRIN_H)
-#  check_compiler_opt(-mavx512f)
+#  xpcfgCheckCompilerOpts(XP_OPTS na -mavx512f)
 #endif()
-check_runs_def(HAVE_WMMINTRIN_H
+xpcfgCheckRunsDef(HAVE_WMMINTRIN_H
   "
   #ifdef __native_client__
   # error NativeClient detected - Avoiding AESNI opcodes
@@ -379,10 +331,10 @@ check_runs_def(HAVE_WMMINTRIN_H
   "
   )
 if(HAVE_WMMINTRIN_H)
-  check_compiler_opt(-maes -mpclmul)
+  xpcfgCheckCompilerOpts(XP_OPTS na -maes -mpclmul)
 endif()
 ########################################
-check_runs_def(HAVE_RDRAND
+xpcfgCheckRunsDef(HAVE_RDRAND
   "
   #ifdef __native_client__
   # error NativeClient detected - Avoiding RDRAND opcodes
@@ -399,15 +351,15 @@ check_runs_def(HAVE_RDRAND
   )
 # NOTE: Disabling compiler usage of rdrand due to minimum hardware requirement
 #if(HAVE_RDRAND)
-#  check_compiler_opt(-mrdrnd)
+#  xpcfgCheckCompilerOpts(XP_OPTS na -mrdrnd)
 #endif()
 ########################################
-check_include_file_def(sys/mman.h HAVE_SYS_MMAN_H)
-check_include_file_def(sys/param.h HAVE_SYS_PARAM_H)
-check_include_file_def(sys/random.h HAVE_SYS_RANDOM_H)
-check_include_file_def(intrin.h HAVE_INTRIN_H)
+xpcfgCheckIncludeFileDef(sys/mman.h HAVE_SYS_MMAN_H)
+xpcfgCheckIncludeFileDef(sys/param.h HAVE_SYS_PARAM_H)
+xpcfgCheckIncludeFileDef(sys/random.h HAVE_SYS_RANDOM_H) # USED
+xpcfgCheckIncludeFileDef(intrin.h HAVE_INTRIN_H)
 ########################################
-check_runs_def(HAVE__XGETBV
+xpcfgCheckRunsDef(HAVE__XGETBV
   "
   #include <intrin.h>
   int main(void)
@@ -417,7 +369,7 @@ check_runs_def(HAVE__XGETBV
   }
   "
   )
-check_runs_def(HAVE_INLINE_ASM
+xpcfgCheckRunsDef(HAVE_INLINE_ASM
   "
   int main(void)
   {
@@ -428,7 +380,7 @@ check_runs_def(HAVE_INLINE_ASM
   }
   "
   )
-check_runs_def(HAVE_AMD64_ASM
+xpcfgCheckRunsDef(HAVE_AMD64_ASM
   "
   #if defined(__amd64) || defined(__amd64__) || defined(__x86_64__)
   # if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__MINGW64__) || defined(_WIN32) || defined(_WIN64)
@@ -451,7 +403,7 @@ check_runs_def(HAVE_AMD64_ASM
   }
   "
   )
-check_runs_def(HAVE_AVX_ASM
+xpcfgCheckRunsDef(HAVE_AVX_ASM
   "
   #if defined(__amd64) || defined(__amd64__) || defined(__x86_64__)
   # if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__MINGW64__) || defined(_WIN32) || defined(_WIN64)
@@ -468,7 +420,7 @@ check_runs_def(HAVE_AVX_ASM
   }
   "
   )
-check_runs_def(HAVE_TI_MODE
+xpcfgCheckRunsDef(HAVE_TI_MODE
   "
   #if !defined(__clang__) && !defined(__GNUC__) && !defined(__SIZEOF_INT128__)
   # error mode(TI) is a gcc extension, and __int128 is not available
@@ -502,7 +454,7 @@ check_runs_def(HAVE_TI_MODE
   }
   "
   )
-check_runs_def(HAVE_CPUID
+xpcfgCheckRunsDef(HAVE_CPUID
   "
   int main(void)
   {
@@ -535,10 +487,10 @@ check_c_source_compiles(
   ASM_HIDE_SYMBOL
   )
 if(ASM_HIDE_SYMBOL)
-  list(APPEND pvtDefs ASM_HIDE_SYMBOL=.hidden)
+  list(APPEND XP_DEFS ASM_HIDE_SYMBOL=.hidden)
 endif()
 ########################################
-check_runs_def(HAVE_WEAK_SYMBOLS
+xpcfgCheckRunsDef(HAVE_WEAK_SYMBOLS
   "
   #if !defined(__ELF__) && !defined(__APPLE_CC__)
   # error Support for weak symbols may not be available
@@ -551,7 +503,7 @@ check_runs_def(HAVE_WEAK_SYMBOLS
   }
   "
   )
-check_runs_def(HAVE_ATOMIC_OPS
+xpcfgCheckRunsDef(HAVE_ATOMIC_OPS
   "
   int main(void)
   {
@@ -562,7 +514,7 @@ check_runs_def(HAVE_ATOMIC_OPS
   }
   "
   )
-check_compiles_def(HAVE_ALLOCA_H
+xpcfgCheckCompilesDef(HAVE_ALLOCA_H
   "
   #include <alloca.h>
   int main(void)
@@ -573,7 +525,7 @@ check_compiles_def(HAVE_ALLOCA_H
   }
   "
   )
-check_compiles_def(HAVE_ALLOCA
+xpcfgCheckCompilesDef(HAVE_ALLOCA
   "
   #include <stdlib.h>
   #include <stddef.h>
@@ -599,15 +551,15 @@ check_compiles_def(HAVE_ALLOCA
   "
   )
 ########################################
-check_func_exists_def(arc4random HAVE_ARC4RANDOM)
-check_func_exists_def(mmap HAVE_MMAP)
-check_func_exists_def(mlock HAVE_MLOCK)
-check_func_exists_def(madvise HAVE_MADVISE)
-check_func_exists_def(mprotect HAVE_MPROTECT)
-check_func_exists_def(raise HAVE_RAISE)
-check_func_exists_def(sysconf HAVE_SYSCONF)
+xpcfgCheckFuncExistsDef(arc4random HAVE_ARC4RANDOM)
+xpcfgCheckFuncExistsDef(mmap HAVE_MMAP)
+xpcfgCheckFuncExistsDef(mlock HAVE_MLOCK)
+xpcfgCheckFuncExistsDef(madvise HAVE_MADVISE)
+xpcfgCheckFuncExistsDef(mprotect HAVE_MPROTECT)
+xpcfgCheckFuncExistsDef(raise HAVE_RAISE)
+xpcfgCheckFuncExistsDef(sysconf HAVE_SYSCONF)
 ########################################
-check_compiles_def(HAVE_GETRANDOM
+xpcfgCheckCompilesDef(HAVE_GETRANDOM
   "
   #include <stdlib.h>
   #ifdef HAVE_UNISTD_H
@@ -627,7 +579,7 @@ check_compiles_def(HAVE_GETRANDOM
   }
   "
   )
-check_compiles_def(HAVE_GETENTROPY
+xpcfgCheckCompilesDef(HAVE_GETENTROPY
   "
   #include <stdlib.h>
   #ifdef HAVE_UNISTD_H
@@ -649,7 +601,7 @@ check_compiles_def(HAVE_GETENTROPY
   }
   "
   )
-check_compiles_def(HAVE_GETPID
+xpcfgCheckCompilesDef(HAVE_GETPID
   "
   #include <sys/types.h>
   #include <unistd.h>
@@ -661,13 +613,13 @@ check_compiles_def(HAVE_GETPID
   "
   )
 ########################################
-check_func_exists_def(posix_memalign HAVE_POSIX_MEMALIGN)
-check_func_exists_def(nanosleep HAVE_NANOSLEEP)
-check_func_exists_def(memset_s HAVE_MEMSET_S)
-check_func_exists_def(explicit_bzero HAVE_EXPLICIT_BZERO)
-check_func_exists_def(explicit_memset HAVE_EXPLICIT_MEMSET)
+xpcfgCheckFuncExistsDef(posix_memalign HAVE_POSIX_MEMALIGN)
+xpcfgCheckFuncExistsDef(nanosleep HAVE_NANOSLEEP)
+xpcfgCheckFuncExistsDef(memset_s HAVE_MEMSET_S)
+xpcfgCheckFuncExistsDef(explicit_bzero HAVE_EXPLICIT_BZERO)
+xpcfgCheckFuncExistsDef(explicit_memset HAVE_EXPLICIT_MEMSET)
 ########################################
-check_compiler_opt(
+xpcfgCheckCompilerOpts(XP_OPTS na
   -fvisibility=hidden
   -fPIC
   -fno-strict-aliasing
@@ -705,13 +657,12 @@ check_compiler_opt(
   -Wwrite-strings
   )
 if(MSVC)
-  list(REMOVE_ITEM pvtOpts
+  list(REMOVE_ITEM XP_OPTS
     -Wall # too many warnings
     )
 endif()
 ########################################
-check_link_opts(
-  # populates linkOpts...
+xpcfgCheckLinkOpts(linkOpts na
   # TODO target_link_options() cannot be used to
   # add options for static library targets
   "-fstack-protector"
@@ -720,10 +671,10 @@ check_link_opts(
   "-Wl,-z,noexecstack"
   )
 ########################################
-list(APPEND pvtDefs CONFIGURED=1)
+list(APPEND XP_DEFS CONFIGURED=1)
 ########################################
-if(VERBOSE_DEFS_OPTS)
-  message(STATUS "pvtDefs: ${pvtDefs}")
-  message(STATUS "pvtOpts: ${pvtOpts}")
+if(XP_VERBOSE)
+  message(STATUS "pvtDefs: ${XP_DEFS}")
+  message(STATUS "pvtOpts: ${XP_OPTS}")
   message(STATUS "linkOpts: ${linkOpts}")
 endif()
