@@ -61,7 +61,7 @@ set(tests
   secretbox8
   secretbox_easy
   secretbox_easy2
-  secretstream
+  secretstream_xchacha20poly1305
   shorthash
   sign
   siphashx24

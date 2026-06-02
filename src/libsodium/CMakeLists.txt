@@ -8,23 +8,63 @@ set(root_srcs
 source_group("" FILES ${root_srcs})
 list(APPEND ${lib_name}_libsrcs ${root_srcs})
 ############################################################
+set(crypto_aead_aegis128l_srcs
+  crypto_aead/aegis128l/aead_aegis128l.c
+  crypto_aead/aegis128l/aegis128l_aesni.c
+  crypto_aead/aegis128l/aegis128l_aesni.h
+  crypto_aead/aegis128l/aegis128l_armcrypto.c
+  crypto_aead/aegis128l/aegis128l_armcrypto.h
+  crypto_aead/aegis128l/aegis128l_common.h
+  crypto_aead/aegis128l/aegis128l_soft.c
+  crypto_aead/aegis128l/aegis128l_soft.h
+  crypto_aead/aegis128l/implementations.h
+  )
+source_group(crypto_aead\\aegis128l FILES ${crypto_aead_aegis128l_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_aead_aegis128l_srcs})
+###############
+set(crypto_aead_aegis256_srcs
+  crypto_aead/aegis256/aead_aegis256.c
+  crypto_aead/aegis256/aegis256_aesni.c
+  crypto_aead/aegis256/aegis256_aesni.h
+  crypto_aead/aegis256/aegis256_armcrypto.c
+  crypto_aead/aegis256/aegis256_armcrypto.h
+  crypto_aead/aegis256/aegis256_common.h
+  crypto_aead/aegis256/aegis256_soft.c
+  crypto_aead/aegis256/aegis256_soft.h
+  crypto_aead/aegis256/implementations.h
+  )
+source_group(crypto_aead\\aegis256 FILES ${crypto_aead_aegis256_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_aead_aegis256_srcs})
+###############
+set(crypto_aead_aes256gcm_srcs
+  crypto_aead/aes256gcm/aead_aes256gcm.c
+  )
+source_group(crypto_aead\\aes256gcm FILES ${crypto_aead_aes256gcm_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_aead_aes256gcm_srcs})
+###############
 set(crypto_aead_aes256gcm_aesni_srcs
   crypto_aead/aes256gcm/aesni/aead_aes256gcm_aesni.c
   )
 source_group(crypto_aead\\aes256gcm\\aesni FILES ${crypto_aead_aes256gcm_aesni_srcs})
 list(APPEND ${lib_name}_libsrcs ${crypto_aead_aes256gcm_aesni_srcs})
 ###############
-set(crypto_aead_chacha20poly1305_sodium_srcs
-  crypto_aead/chacha20poly1305/sodium/aead_chacha20poly1305.c
+set(crypto_aead_aes256gcm_armcrypto_srcs
+  crypto_aead/aes256gcm/armcrypto/aead_aes256gcm_armcrypto.c
   )
-source_group(crypto_aead\\chacha20poly1305\\sodium FILES ${crypto_aead_chacha20poly1305_sodium_srcs})
-list(APPEND ${lib_name}_libsrcs ${crypto_aead_chacha20poly1305_sodium_srcs})
+source_group(crypto_aead\\aes256gcm\\armcrypto FILES ${crypto_aead_aes256gcm_armcrypto_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_aead_aes256gcm_armcrypto_srcs})
 ###############
-set(crypto_aead_xchacha20poly1305_sodium_srcs
-  crypto_aead/xchacha20poly1305/sodium/aead_xchacha20poly1305.c
+set(crypto_aead_chacha20poly1305_srcs
+  crypto_aead/chacha20poly1305/aead_chacha20poly1305.c
   )
-source_group(crypto_aead\\xchacha20poly1305\\sodium FILES ${crypto_aead_xchacha20poly1305_sodium_srcs})
-list(APPEND ${lib_name}_libsrcs ${crypto_aead_xchacha20poly1305_sodium_srcs})
+source_group(crypto_aead\\chacha20poly1305 FILES ${crypto_aead_chacha20poly1305_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_aead_chacha20poly1305_srcs})
+###############
+set(crypto_aead_xchacha20poly1305_srcs
+  crypto_aead/xchacha20poly1305/aead_xchacha20poly1305.c
+  )
+source_group(crypto_aead\\xchacha20poly1305 FILES ${crypto_aead_xchacha20poly1305_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_aead_xchacha20poly1305_srcs})
 ############################################################
 set(crypto_auth_srcs
   crypto_auth/crypto_auth.c
@@ -120,11 +160,37 @@ set(crypto_core_hsalsa20_ref2_srcs
 source_group(crypto_core\\hsalsa20\\ref2 FILES ${crypto_core_hsalsa20_ref2_srcs})
 list(APPEND ${lib_name}_libsrcs ${crypto_core_hsalsa20_ref2_srcs})
 ###############
+set(crypto_core_keccak1600_srcs
+  crypto_core/keccak1600/keccak1600.c
+  )
+source_group(crypto_core\\keccak1600 FILES ${crypto_core_keccak1600_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_core_keccak1600_srcs})
+###############
+set(crypto_core_keccak1600_armsha3_srcs
+  crypto_core/keccak1600/armsha3/keccak1600_armsha3.c
+  crypto_core/keccak1600/armsha3/keccak1600_armsha3.h
+  )
+source_group(crypto_core\\keccak1600\\armsha3 FILES ${crypto_core_keccak1600_armsha3_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_core_keccak1600_armsha3_srcs})
+###############
+set(crypto_core_keccak1600_ref_srcs
+  crypto_core/keccak1600/ref/keccak1600_ref.c
+  crypto_core/keccak1600/ref/keccak1600_ref.h
+  )
+source_group(crypto_core\\keccak1600\\ref FILES ${crypto_core_keccak1600_ref_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_core_keccak1600_ref_srcs})
+###############
 set(crypto_core_salsa_ref_srcs
   crypto_core/salsa/ref/core_salsa_ref.c
   )
 source_group(crypto_core\\salsa\\ref FILES ${crypto_core_salsa_ref_srcs})
 list(APPEND ${lib_name}_libsrcs ${crypto_core_salsa_ref_srcs})
+###############
+set(crypto_core_softaes_srcs
+  crypto_core/softaes/softaes.c
+  )
+source_group(crypto_core\\softaes FILES ${crypto_core_softaes_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_core_softaes_srcs})
 ############################################################
 set(crypto_generichash_srcs
   crypto_generichash/crypto_generichash.c
@@ -174,6 +240,12 @@ set(crypto_hash_sha256_cp_srcs
 source_group(crypto_hash\\sha256\\cp FILES ${crypto_hash_sha256_cp_srcs})
 list(APPEND ${lib_name}_libsrcs ${crypto_hash_sha256_cp_srcs})
 ###############
+set(crypto_hash_sha3_srcs
+  crypto_hash/sha3/hash_sha3.c
+  )
+source_group(crypto_hash\\sha3 FILES ${crypto_hash_sha3_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_hash_sha3_srcs})
+###############
 set(crypto_hash_sha512_srcs
   crypto_hash/sha512/hash_sha512.c
   )
@@ -186,6 +258,19 @@ set(crypto_hash_sha512_cp_srcs
 source_group(crypto_hash\\sha512\\cp FILES ${crypto_hash_sha512_cp_srcs})
 list(APPEND ${lib_name}_libsrcs ${crypto_hash_sha512_cp_srcs})
 ############################################################
+set(crypto_ipcrypt_srcs
+  crypto_ipcrypt/crypto_ipcrypt.c
+  crypto_ipcrypt/implementations.h
+  crypto_ipcrypt/ipcrypt_aesni.c
+  crypto_ipcrypt/ipcrypt_aesni.h
+  crypto_ipcrypt/ipcrypt_armcrypto.c
+  crypto_ipcrypt/ipcrypt_armcrypto.h
+  crypto_ipcrypt/ipcrypt_soft.c
+  crypto_ipcrypt/ipcrypt_soft.h
+  )
+source_group(crypto_ipcrypt FILES ${crypto_ipcrypt_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_ipcrypt_srcs})
+############################################################
 set(crypto_kdf_srcs
   crypto_kdf/crypto_kdf.c
   )
@@ -197,6 +282,38 @@ set(crypto_kdf_blake2b_srcs
   )
 source_group(crypto_kdf\\blake2b FILES ${crypto_kdf_blake2b_srcs})
 list(APPEND ${lib_name}_libsrcs ${crypto_kdf_blake2b_srcs})
+###############
+set(crypto_kdf_hkdf_srcs
+  crypto_kdf/hkdf/kdf_hkdf_sha256.c
+  crypto_kdf/hkdf/kdf_hkdf_sha512.c
+  )
+source_group(crypto_kdf\\hkdf FILES ${crypto_kdf_hkdf_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_kdf_hkdf_srcs})
+############################################################
+set(crypto_kem_srcs
+  crypto_kem/crypto_kem.c
+  )
+source_group(crypto_kem FILES ${crypto_kem_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_kem_srcs})
+###############
+set(crypto_kem_mlkem768_srcs
+  crypto_kem/mlkem768/kem_mlkem768.c
+  )
+source_group(crypto_kem\\mlkem768 FILES ${crypto_kem_mlkem768_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_kem_mlkem768_srcs})
+###############
+set(crypto_kem_mlkem768_ref_srcs
+  crypto_kem/mlkem768/ref/kem_mlkem768_ref.c
+  crypto_kem/mlkem768/ref/kem_mlkem768_ref.h
+  )
+source_group(crypto_kem\\mlkem768\\ref FILES ${crypto_kem_mlkem768_ref_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_kem_mlkem768_ref_srcs})
+###############
+set(crypto_kem_xwing_srcs
+  crypto_kem/xwing/kem_xwing.c
+  )
+source_group(crypto_kem\\xwing FILES ${crypto_kem_xwing_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_kem_xwing_srcs})
 ############################################################
 set(crypto_kx_srcs
   crypto_kx/crypto_kx.c
@@ -246,16 +363,20 @@ set(crypto_pwhash_argon2_srcs
   crypto_pwhash/argon2/argon2-encoding.h
   crypto_pwhash/argon2/argon2-fill-block-avx2.c
   crypto_pwhash/argon2/argon2-fill-block-avx512f.c
+  crypto_pwhash/argon2/argon2-fill-block-neon.c
   crypto_pwhash/argon2/argon2-fill-block-ref.c
   crypto_pwhash/argon2/argon2-fill-block-ssse3.c
+  crypto_pwhash/argon2/argon2-fill-block-wasm32.c
   crypto_pwhash/argon2/argon2.c
   crypto_pwhash/argon2/argon2.h
   crypto_pwhash/argon2/blake2b-long.c
   crypto_pwhash/argon2/blake2b-long.h
   crypto_pwhash/argon2/blamka-round-avx2.h
   crypto_pwhash/argon2/blamka-round-avx512f.h
+  crypto_pwhash/argon2/blamka-round-neon.h
   crypto_pwhash/argon2/blamka-round-ref.h
   crypto_pwhash/argon2/blamka-round-ssse3.h
+  crypto_pwhash/argon2/blamka-round-wasm32.h
   crypto_pwhash/argon2/pwhash_argon2i.c
   crypto_pwhash/argon2/pwhash_argon2id.c
   )
@@ -510,11 +631,63 @@ set(crypto_stream_xsalsa20_srcs
 source_group(crypto_stream\\xsalsa20 FILES ${crypto_stream_xsalsa20_srcs})
 list(APPEND ${lib_name}_libsrcs ${crypto_stream_xsalsa20_srcs})
 ############################################################
-set(crypto_verify_sodium_srcs
-  crypto_verify/sodium/verify.c
+set(crypto_verify_srcs
+  crypto_verify/verify.c
   )
-source_group(crypto_verify\\sodium FILES ${crypto_verify_sodium_srcs})
-list(APPEND ${lib_name}_libsrcs ${crypto_verify_sodium_srcs})
+source_group(crypto_verify FILES ${crypto_verify_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_verify_srcs})
+############################################################
+set(crypto_xof_shake128_srcs
+  crypto_xof/shake128/xof_shake128.c
+  )
+source_group(crypto_xof\\shake128 FILES ${crypto_xof_shake128_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_xof_shake128_srcs})
+###############
+set(crypto_xof_shake128_ref_srcs
+  crypto_xof/shake128/ref/shake128_ref.c
+  crypto_xof/shake128/ref/shake128_ref.h
+  )
+source_group(crypto_xof\\shake128\\ref FILES ${crypto_xof_shake128_ref_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_xof_shake128_ref_srcs})
+###############
+set(crypto_xof_shake256_srcs
+  crypto_xof/shake256/xof_shake256.c
+  )
+source_group(crypto_xof\\shake256 FILES ${crypto_xof_shake256_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_xof_shake256_srcs})
+###############
+set(crypto_xof_shake256_ref_srcs
+  crypto_xof/shake256/ref/shake256_ref.c
+  crypto_xof/shake256/ref/shake256_ref.h
+  )
+source_group(crypto_xof\\shake256\\ref FILES ${crypto_xof_shake256_ref_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_xof_shake256_ref_srcs})
+###############
+set(crypto_xof_turboshake128_srcs
+  crypto_xof/turboshake128/xof_turboshake128.c
+  )
+source_group(crypto_xof\\turboshake128 FILES ${crypto_xof_turboshake128_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_xof_turboshake128_srcs})
+###############
+set(crypto_xof_turboshake128_ref_srcs
+  crypto_xof/turboshake128/ref/turboshake128_ref.c
+  crypto_xof/turboshake128/ref/turboshake128_ref.h
+  )
+source_group(crypto_xof\\turboshake128\\ref FILES ${crypto_xof_turboshake128_ref_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_xof_turboshake128_ref_srcs})
+###############
+set(crypto_xof_turboshake256_srcs
+  crypto_xof/turboshake256/xof_turboshake256.c
+  )
+source_group(crypto_xof\\turboshake256 FILES ${crypto_xof_turboshake256_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_xof_turboshake256_srcs})
+###############
+set(crypto_xof_turboshake256_ref_srcs
+  crypto_xof/turboshake256/ref/turboshake256_ref.c
+  crypto_xof/turboshake256/ref/turboshake256_ref.h
+  )
+source_group(crypto_xof\\turboshake256\\ref FILES ${crypto_xof_turboshake256_ref_srcs})
+list(APPEND ${lib_name}_libsrcs ${crypto_xof_turboshake256_ref_srcs})
 ############################################################
 set(include_srcs
   include/Makefile.am
@@ -526,6 +699,8 @@ list(APPEND ${lib_name}_libsrcs ${include_srcs})
 ###############
 set(include_sodium_srcs
   include/sodium/core.h
+  include/sodium/crypto_aead_aegis128l.h
+  include/sodium/crypto_aead_aegis256.h
   include/sodium/crypto_aead_aes256gcm.h
   include/sodium/crypto_aead_chacha20poly1305.h
   include/sodium/crypto_aead_xchacha20poly1305.h
@@ -539,6 +714,7 @@ set(include_sodium_srcs
   include/sodium/crypto_core_ed25519.h
   include/sodium/crypto_core_hchacha20.h
   include/sodium/crypto_core_hsalsa20.h
+  include/sodium/crypto_core_keccak1600.h
   include/sodium/crypto_core_ristretto255.h
   include/sodium/crypto_core_salsa20.h
   include/sodium/crypto_core_salsa2012.h
@@ -547,9 +723,16 @@ set(include_sodium_srcs
   include/sodium/crypto_generichash_blake2b.h
   include/sodium/crypto_hash.h
   include/sodium/crypto_hash_sha256.h
+  include/sodium/crypto_hash_sha3.h
   include/sodium/crypto_hash_sha512.h
+  include/sodium/crypto_ipcrypt.h
   include/sodium/crypto_kdf.h
   include/sodium/crypto_kdf_blake2b.h
+  include/sodium/crypto_kdf_hkdf_sha256.h
+  include/sodium/crypto_kdf_hkdf_sha512.h
+  include/sodium/crypto_kem.h
+  include/sodium/crypto_kem_mlkem768.h
+  include/sodium/crypto_kem_xwing.h
   include/sodium/crypto_kx.h
   include/sodium/crypto_onetimeauth.h
   include/sodium/crypto_onetimeauth_poly1305.h
@@ -580,6 +763,10 @@ set(include_sodium_srcs
   include/sodium/crypto_verify_16.h
   include/sodium/crypto_verify_32.h
   include/sodium/crypto_verify_64.h
+  include/sodium/crypto_xof_shake128.h
+  include/sodium/crypto_xof_shake256.h
+  include/sodium/crypto_xof_turboshake128.h
+  include/sodium/crypto_xof_turboshake256.h
   include/sodium/export.h
   include/sodium/randombytes.h
   include/sodium/randombytes_internal_random.h
@@ -592,6 +779,7 @@ source_group(include\\sodium FILES ${include_sodium_srcs})
 list(APPEND ${lib_name}_libsrcs ${include_sodium_srcs})
 ###############
 set(include_sodium_private_srcs
+  include/sodium/private/asm_cet.h
   include/sodium/private/chacha20_ietf_ext.h
   include/sodium/private/common.h
   include/sodium/private/ed25519_ref10.h
@@ -599,6 +787,8 @@ set(include_sodium_private_srcs
   include/sodium/private/ed25519_ref10_fe_51.h
   include/sodium/private/implementations.h
   include/sodium/private/mutex.h
+  include/sodium/private/quirks.h
+  include/sodium/private/softaes.h
   include/sodium/private/sse2_64_32.h
   )
 source_group(include\\sodium\\private FILES ${include_sodium_private_srcs})
@@ -680,7 +870,7 @@ set(targetsFile ${lib_name}-targets)
 if(COMMAND xpExternPackage)
   xpExternPackage(TARGETS_FILE ${targetsFile}
     LIBRARIES ${lib_name} DEFAULT_TARGETS ${lib_name}
-    BASE aa099f5e82ae78175f9c1c48372a123cb634dd92 XPDIFF "auto"
+    BASE ${PROJECT_VERSION} XPDIFF "auto"
     WEB "https://doc.libsodium.org/" UPSTREAM "github.com/jedisct1/libsodium"
     DESC "library for encryption, decryption, signatures, password hashing and more"
     LICENSE "[ISC](https://doc.libsodium.org/#license 'Internet Systems Consortium License, functionally equivalent to simplified BSD and MIT licenses')"
