@@ -869,6 +869,7 @@ target_link_libraries(${lib_name} PRIVATE Threads::Threads)
 set(targetsFile ${lib_name}-targets)
 if(COMMAND xpExternPackage)
   xpExternPackage(TARGETS_FILE ${targetsFile}
+    CREATE_ALIASES PKG_CMAKE_USEXT
     LIBRARIES ${lib_name} DEFAULT_TARGETS ${lib_name}
     BASE ${PROJECT_VERSION} XPDIFF "auto"
     WEB "https://doc.libsodium.org/" UPSTREAM "github.com/jedisct1/libsodium"
