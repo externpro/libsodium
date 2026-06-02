@@ -6,7 +6,7 @@
       "hidden": true,
       "binaryDir": "${sourceDir}/_bld-${presetName}",
       "cacheVariables": {
-        "VERBOSE_DEFS_OPTS": "ON",
+        "XP_VERBOSE": "ON",
         "CMAKE_EXPERIMENTAL_GENERATE_SBOM": "ca494ed3-b261-4205-a01f-603c95e4cae0"
       }
     }
