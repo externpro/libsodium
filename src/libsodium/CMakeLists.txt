@@ -856,8 +856,8 @@ endif()
 configure_file(include/sodium/version.h.in include/sodium/version.h)
 ############################################################
 add_library(${lib_name} STATIC ${libsrcs})
-target_compile_definitions(${lib_name} PUBLIC SODIUM_STATIC PRIVATE ${pvtDefs})
-target_compile_options(${lib_name} PRIVATE ${pvtOpts})
+target_compile_definitions(${lib_name} PUBLIC SODIUM_STATIC PRIVATE ${XP_DEFS})
+target_compile_options(${lib_name} PRIVATE ${XP_OPTS})
 target_include_directories(${lib_name} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/sodium>
@@ -869,6 +869,7 @@ target_link_libraries(${lib_name} PRIVATE Threads::Threads)
 set(targetsFile ${lib_name}-targets)
 if(COMMAND xpExternPackage)
   xpExternPackage(TARGETS_FILE ${targetsFile}
+    CREATE_ALIASES PKG_CMAKE_USEXT
     LIBRARIES ${lib_name} DEFAULT_TARGETS ${lib_name}
     BASE ${PROJECT_VERSION} XPDIFF "auto"
     WEB "https://doc.libsodium.org/" UPSTREAM "github.com/jedisct1/libsodium"
